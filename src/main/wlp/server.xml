@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="Liberty JMS AMQP Sample">
+  <remoteFileAccess>
+    <writeDir>${server.config.dir}</writeDir>
+  </remoteFileAccess>
+
+  <!-- Enable features -->
+  <featureManager>
+    <feature>javaee-7.0</feature>
+    <feature>jmsMdb-3.2</feature>
+    <feature>wasJmsClient-2.0</feature>
+    <feature>jndi-1.0</feature>
+    <feature>adminCenter-1.0</feature>
+    <feature>jms-2.0</feature>
+  </featureManager>
+
+  <quickStartSecurity userName="admin" userPassword="CHANGE_ME"/>
+
+  <keyStore id="defaultKeyStore" password="CHANGE_ME"/>
+
+  <httpEndpoint id="defaultHttpEndpoint" httpPort="9080" httpsPort="9443"/>
+
+  <applicationManager autoExpand="true"/>
+
+  <!-- RabbitMQ JMS Client Shared Library -->
+  <library id="RMQLibs">
+    <fileset dir="${env.RMQ_LIB_DIR}" includes="*.jar"/>
+  </library>
+
+  <!-- RabbitMQ Connection Factory definitions -->
+  <jndiObjectFactory id="RMQConnectionObjectFactory" objectClassName="javax.jms.ConnectionFactory" className="com.rabbitmq.jms.admin.RMQObjectFactory" libraryRef="RMQLibs"/>
+
+  <jndiReferenceEntry id="RMQConnectionFactory" jndiName="jms/RMQConnectionFactory" factoryRef="RMQConnectionObjectFactory">
+    <properties username="guest"/>
+    <properties password="${env.RMQ_PASSWORD}"/>
+    <properties virtualHost="/"/>
+    <properties host="localhost"/>
+  </jndiReferenceEntry>
+
+  <!-- RabbitMQ Queue definitions -->
+  <jndiObjectFactory id="RMQQueueObjectFactory" objectClassName="javax.jms.Queue" className="com.rabbitmq.jms.admin.RMQObjectFactory" libraryRef="RMQLibs"/>
+
+  <jndiReferenceEntry id="RMQQueue" jndiName="jms/RMQQueue" factoryRef="RMQQueueObjectFactory">
+    <properties name="jms/RMQQueue"/>
+    <properties destinationName="jms/RMQQueue"/>
+    <properties type="javax.jms.Queue"/>
+    <properties amqp="true"/>
+    <properties amqpExchangeName="qwyck.direct"/>
+    <properties amqpRoutingKey="hello"/>
+    <properties amqpQueueName="HelloQueue"/>
+  </jndiReferenceEntry>
+
+  <!-- MDB Activation Spec -->
+  <jmsActivationSpec id="liberty-jms-aqmp-1.0.0-SNAPSHOT/ReceiverMDB">
+    <!-- Returns casting exception -->
+    <properties.wasJMS destinationLookup="jms/RMQQueue" destinationType="javax.jms.Queue"/>
+    <!-- Returns jms queue not found exception -->
+    <!--<properties.wasJMS destinationLookup="jms/RMQQueue" destinationType="javax.jms.Queue"/>-->
+  </jmsActivationSpec>
+</server>
