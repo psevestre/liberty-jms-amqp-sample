@@ -10,7 +10,7 @@
   <servlet id="JMSSender">
     <servlet-name>sender</servlet-name>
     <display-name>sender</display-name>
-    <servlet-class>net.qwyck.samples.liberty_jms_amqp.JMSSenderServlet</servlet-class>
+    <servlet-class>net.qwyck.samples.libertyamqp.JMSSenderServlet</servlet-class>
     <load-on-startup></load-on-startup>
   </servlet>
 

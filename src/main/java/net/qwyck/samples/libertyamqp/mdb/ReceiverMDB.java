@@ -1,4 +1,4 @@
-package net.qwyck.samples.liberty_jms_amqp;
+package net.qwyck.samples.libertyamqp.mdb;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -14,7 +14,6 @@ public class ReceiverMDB implements MessageListener {
 	@Resource
 	MessageDrivenContext ejbcontext;
 
-	@SuppressWarnings("unused")
 	@Resource
 	private void setMessageDrivenContext(EJBContext ejbcontext) {
 
@@ -25,7 +24,6 @@ public class ReceiverMDB implements MessageListener {
 
 	}
 
-	@Override
 	public void onMessage(Message message) {
 		System.out.println("Received: " + message);
 	}

@@ -1,4 +1,4 @@
-package net.qwyck.samples.liberty_jms_amqp;
+package net.qwyck.samples.libertyamqp.web;
 
 import java.io.IOException;
 
@@ -9,8 +9,6 @@ import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.TextMessage;
 import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
