@@ -12,6 +12,9 @@
     <feature>jndi-1.0</feature>
     <feature>adminCenter-1.0</feature>
     <feature>jms-2.0</feature>
+    <feature>appSecurity-2.0</feature>
+    <feature>passwordUtilities-1.0</feature>
+    <feature>jca-1.7</feature>
   </featureManager>
 
   <quickStartSecurity userName="admin" userPassword="CHANGE_ME"/>
@@ -22,39 +25,29 @@
 
   <applicationManager autoExpand="true"/>
 
-  <!-- RabbitMQ JMS Client Shared Library -->
-  <library id="RMQLibs">
-    <fileset dir="${env.RMQ_LIB_DIR}" includes="*.jar"/>
-  </library>
+  <resourceAdapter id="GenericJMSRA" location="C:/IBM/liberty/adapters/genericra.rar">
+    <properties.GenericJMSRA ConnectionFactoryClassName="com.rabbitmq.jms.admin.RMQConnectionFactory" />
+    <properties.GenericJMSRA QueueConnectionFactoryClassName="com.rabbitmq.jms.admin.RMQConnectionFactory" />
+    <properties.GenericJMSRA QueueClassName="com.rabbitmq.jms.admin.RMQDestination" />
+    <properties.GenericJMSRA ConnectionFactoryProperties="VirtualHost=/,Host=localhost" />
+    <properties.GenericJMSRA DeliveryType="Synchronous" />
+    <properties.GenericJMSRA ProviderIntegrationMode="javabean" />
+    <properties.GenericJMSRA userName="guest" />
+    <properties.GenericJMSRA password="${env.RMQ_PASSWORD}" />
+  </resourceAdapter>
 
-  <!-- RabbitMQ Connection Factory definitions -->
-  <jndiObjectFactory id="RMQConnectionObjectFactory" objectClassName="javax.jms.ConnectionFactory" className="com.rabbitmq.jms.admin.RMQObjectFactory" libraryRef="RMQLibs"/>
+  <jmsQueue id="jms/RMQQueue" jndiName="jms/RMQQueue">
+    <properties.GenericJMSRA DestinationType="javax.jms.Queue" />
+    <properties.GenericJMSRA DestinationProperties="Amqp=true,AmqpExchangeName=qwyck.direct,AmqpRoutingKey=hello,AmqpQueueName=HelloQueue" />
+  </jmsQueue>
 
-  <jndiReferenceEntry id="RMQConnectionFactory" jndiName="jms/RMQConnectionFactory" factoryRef="RMQConnectionObjectFactory">
-    <properties username="guest"/>
-    <properties password="${env.RMQ_PASSWORD}"/>
-    <properties virtualHost="/"/>
-    <properties host="localhost"/>
-  </jndiReferenceEntry>
-
-  <!-- RabbitMQ Queue definitions -->
-  <jndiObjectFactory id="RMQQueueObjectFactory" objectClassName="javax.jms.Queue" className="com.rabbitmq.jms.admin.RMQObjectFactory" libraryRef="RMQLibs"/>
-
-  <jndiReferenceEntry id="RMQQueue" jndiName="jms/RMQQueue" factoryRef="RMQQueueObjectFactory">
-    <properties name="jms/RMQQueue"/>
-    <properties destinationName="jms/RMQQueue"/>
-    <properties type="javax.jms.Queue"/>
-    <properties amqp="true"/>
-    <properties amqpExchangeName="qwyck.direct"/>
-    <properties amqpRoutingKey="hello"/>
-    <properties amqpQueueName="HelloQueue"/>
-  </jndiReferenceEntry>
+  <jmsConnectionFactory id="jms/RMQConnectionFactory" jndiName="jms/RMQConnectionFactory">
+    <properties.GenericJMSRA />
+  </jmsConnectionFactory >
 
   <!-- MDB Activation Spec -->
-  <jmsActivationSpec id="liberty-jms-aqmp-1.0.0-SNAPSHOT/ReceiverMDB">
-    <!-- Returns casting exception -->
-    <properties.wasJMS destinationLookup="jms/RMQQueue" destinationType="javax.jms.Queue"/>
-    <!-- Returns jms queue not found exception -->
-    <!--<properties.wasJMS destinationLookup="jms/RMQQueue" destinationType="javax.jms.Queue"/>-->
+  <jmsActivationSpec id="jms/RMQActivationSpec">
+    <properties.GenericJMSRA DestinationType="javax.jms.Queue" />
+    <properties.GenericJMSRA DestinationProperties="Amqp=true,AmqpExchangeName=qwyck.direct,AmqpRoutingKey=hello,AmqpQueueName=HelloQueue" />
   </jmsActivationSpec>
 </server>

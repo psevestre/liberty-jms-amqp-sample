@@ -5,10 +5,10 @@
   
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.qwyck.samples</groupId>
-  <artifactId>liberty-jms-aqmp</artifactId>
+  <artifactId>liberty-jms-amqp</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>Liberty JMS AQMP Sample</name>
+  <name>Liberty JMS AMQP Sample</name>
   <url></url>
 
   <dependencies>
@@ -91,6 +91,9 @@
                     <feature>jndi-1.0</feature>
                     <feature>adminCenter-1.0</feature>
                     <feature>jms-2.0</feature>
+                    <feature>appSecurity-2.0</feature>
+                    <feature>passwordUtilities-1.0</feature>
+                    <feature>jca-1.7</feature>
                   </features>
                 </configuration>
               </execution>

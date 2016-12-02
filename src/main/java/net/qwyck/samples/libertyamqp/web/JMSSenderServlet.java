@@ -22,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 public class JMSSenderServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	private static final String user = "guest";
+	private static final String pass = System.getenv("RMQ_PASSWORD");
+
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -37,7 +40,7 @@ public class JMSSenderServlet extends HttpServlet {
       InitialContext ctx = new InitialContext();
 
       QueueConnectionFactory factory = (QueueConnectionFactory) ctx.lookup("jms/RMQConnectionFactory");
-      QueueConnection conn = factory.createQueueConnection();
+      QueueConnection conn = factory.createQueueConnection(user, pass);
       Queue queue = (Queue) ctx.lookup("jms/RMQQueue");
 
       conn.start();
@@ -52,7 +55,11 @@ public class JMSSenderServlet extends HttpServlet {
       System.out.println("Message sent to jms/RMQQueue successfully.");
 
       if (conn != null) {
-        conn.close();
+				try {
+					conn.close();
+				} catch (UnsupportedOperationException e) {
+					System.out.println("Caught UnsupportedOperationException whilst closing connection to RabbitMQ.");
+				}
       }
 		} catch (Exception e) {
 			System.out.println("An unexpected error occurred, check the error log for more details.");
